@@ -229,9 +229,18 @@ export function ChatPresetsItem({ item }: { item: NavChatPresets }) {
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger
-            render={<SidebarMenuButton tooltip={item.title} />}
+            render={
+              <SidebarMenuButton
+                tooltip={item.title}
+                isActive={normalizedHref.startsWith('/chat')}
+              />
+            }
           >
-            {item.icon && <item.icon className='h-4 w-4 shrink-0' />}
+            {item.icon && (
+              <span className='group-data-active/menu-button:bg-brand-highlight flex size-7 shrink-0 items-center justify-center rounded-lg bg-white/8 text-white/65 transition-colors group-hover/menu-button:bg-white/12 group-hover/menu-button:text-white group-data-active/menu-button:text-white'>
+                <item.icon className='shrink-0' />
+              </span>
+            )}
             <span className='min-w-0 flex-1 truncate'>{item.title}</span>
             <ChevronRight className='ms-auto h-4 w-4 shrink-0 opacity-70' />
           </DropdownMenuTrigger>
@@ -259,9 +268,15 @@ export function ChatPresetsItem({ item }: { item: NavChatPresets }) {
     >
       <CollapsibleTrigger
         className='group/collapsible-trigger'
-        render={<SidebarMenuButton />}
+        render={
+          <SidebarMenuButton isActive={normalizedHref.startsWith('/chat')} />
+        }
       >
-        {item.icon && <item.icon className='shrink-0' />}
+        {item.icon && (
+          <span className='group-data-active/menu-button:bg-brand-highlight flex size-7 shrink-0 items-center justify-center rounded-lg bg-white/8 text-white/65 transition-colors group-hover/menu-button:bg-white/12 group-hover/menu-button:text-white group-data-active/menu-button:text-white'>
+            <item.icon className='shrink-0' />
+          </span>
+        )}
         <span className='min-w-0 flex-1 truncate'>{item.title}</span>
         <ChevronRight className='ms-auto size-4 shrink-0 transition-transform duration-200 group-data-[panel-open]/collapsible-trigger:rotate-90' />
       </CollapsibleTrigger>

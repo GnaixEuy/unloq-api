@@ -275,16 +275,9 @@ function PresetConfig() {
               <div
                 aria-hidden='true'
                 className='absolute inset-0 rounded-md'
-                style={
-                  preset.value === 'default'
-                    ? {
-                        background:
-                          'linear-gradient(135deg, var(--background) 0%, var(--muted) 50%, var(--foreground) 100%)',
-                      }
-                    : {
-                        background: `linear-gradient(135deg, ${preset.swatches[0]} 0%, ${preset.swatches[1] ?? preset.swatches[0]} 100%)`,
-                      }
-                }
+                style={{
+                  background: `linear-gradient(135deg, ${preset.swatches[0]} 0%, ${preset.swatches[1] ?? preset.swatches[0]} 100%)`,
+                }}
               />
               <CircleCheck
                 className={cn(
@@ -309,10 +302,8 @@ function PresetConfig() {
  *
  * Each option renders a live "Aa" preview in the font it represents.
  * `Auto` deliberately leaves `fontFamily` undefined so the preview inherits
- * the currently active body font — that way the user sees what `Auto` will
- * actually look like for the active preset (Anthropic → serif glyphs,
- * everything else → sans glyphs) without us having to duplicate the
- * preset-default mapping in the UI.
+ * the currently active body font. That way the user sees what `Auto` will
+ * actually look like without duplicating the preset-default mapping in the UI.
  */
 const FONT_OPTIONS: {
   value: ThemeFont

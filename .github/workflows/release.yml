@@ -6,12 +6,12 @@ on:
   workflow_dispatch:
     inputs:
       name:
-        description: 'reason'
+        description: "reason"
         required: false
   push:
     tags:
-      - '*'
-      - '!*-alpha*'
+      - "*"
+      - "!*-alpha*"
 
 jobs:
   linux:
@@ -38,19 +38,10 @@ jobs:
           cd default
           DISABLE_ESLINT_PLUGIN='true' VITE_REACT_APP_VERSION=$VERSION bun run build
           cd ../..
-      - name: Build Frontend (classic)
-        env:
-          CI: ""
-        run: |
-          cd web
-          bun install --frozen-lockfile
-          cd classic
-          VITE_REACT_APP_VERSION=$VERSION bun run build
-          cd ../..
       - name: Set up Go
         uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
         with:
-          go-version: '>=1.25.1'
+          go-version: ">=1.25.1"
       - name: Build Backend (amd64)
         run: |
           go mod download
@@ -98,19 +89,10 @@ jobs:
           cd default
           DISABLE_ESLINT_PLUGIN='true' VITE_REACT_APP_VERSION=$VERSION bun run build
           cd ../..
-      - name: Build Frontend (classic)
-        env:
-          CI: ""
-        run: |
-          cd web
-          bun install --frozen-lockfile
-          cd classic
-          VITE_REACT_APP_VERSION=$VERSION bun run build
-          cd ../..
       - name: Set up Go
         uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
         with:
-          go-version: '>=1.25.1'
+          go-version: ">=1.25.1"
       - name: Build Backend
         run: |
           go mod download
@@ -155,19 +137,10 @@ jobs:
           cd default
           DISABLE_ESLINT_PLUGIN='true' VITE_REACT_APP_VERSION=$VERSION bun run build
           cd ../..
-      - name: Build Frontend (classic)
-        env:
-          CI: ""
-        run: |
-          cd web
-          bun install --frozen-lockfile
-          cd classic
-          VITE_REACT_APP_VERSION=$VERSION bun run build
-          cd ../..
       - name: Set up Go
         uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
         with:
-          go-version: '>=1.25.1'
+          go-version: ">=1.25.1"
       - name: Build Backend
         run: |
           go mod download

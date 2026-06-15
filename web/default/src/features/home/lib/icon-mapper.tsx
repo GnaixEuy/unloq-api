@@ -17,14 +17,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import {
-  Zap,
-  Shield,
+  Activity,
+  CircleDollarSign,
+  GitBranch,
   Globe,
-  Code,
   Gauge,
-  DollarSign,
-  Users,
-  HeartHandshake,
+  Network,
+  Route,
+  ShieldCheck,
+  UsersRound,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -32,14 +33,15 @@ import {
  * Map of icon names to Lucide icon components
  */
 const ICON_MAP: Record<string, LucideIcon> = {
-  Zap,
-  Shield,
+  Activity,
+  CircleDollarSign,
+  GitBranch,
   Globe,
-  Code,
   Gauge,
-  DollarSign,
-  Users,
-  HeartHandshake,
+  Network,
+  Route,
+  ShieldCheck,
+  UsersRound,
 }
 
 /**

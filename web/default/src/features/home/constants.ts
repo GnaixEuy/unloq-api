@@ -87,13 +87,13 @@ export const DEFAULT_FEATURES = [
     title: 'Lightning Fast',
     description:
       'Optimized network architecture ensures millisecond response times',
-    iconName: 'Zap',
+    iconName: 'Route',
   },
   {
     title: 'Secure & Reliable',
     description:
       'Enterprise-grade security with comprehensive permission management',
-    iconName: 'Shield',
+    iconName: 'ShieldCheck',
   },
   {
     title: 'Global Coverage',
@@ -103,7 +103,7 @@ export const DEFAULT_FEATURES = [
   {
     title: 'Developer Friendly',
     description: 'Compatible API routes for common AI application workflows',
-    iconName: 'Code',
+    iconName: 'Network',
   },
   {
     title: 'High Performance',
@@ -113,17 +113,17 @@ export const DEFAULT_FEATURES = [
   {
     title: 'Transparent Billing',
     description: 'Pay-as-you-go with real-time usage monitoring',
-    iconName: 'DollarSign',
+    iconName: 'CircleDollarSign',
   },
   {
     title: 'Team Collaboration',
     description: 'Multi-user management with flexible permission allocation',
-    iconName: 'Users',
+    iconName: 'UsersRound',
   },
   {
     title: 'Open Source',
     description: 'Community driven, self-hosted, and extensible',
-    iconName: 'HeartHandshake',
+    iconName: 'GitBranch',
   },
 ] as const
 

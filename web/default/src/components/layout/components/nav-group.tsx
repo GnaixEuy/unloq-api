@@ -19,6 +19,7 @@ For commercial licensing, please contact support@quantumnous.com
 import { type ReactNode, useState, useEffect } from 'react'
 import { Link, useLocation } from '@tanstack/react-router'
 import { ChevronRight } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import {
   Collapsible,
@@ -54,6 +55,27 @@ import {
 } from '../types'
 import { ChatPresetsItem } from './chat-presets-item'
 
+function SidebarIconTile(props: {
+  icon?: React.ElementType
+  className?: string
+}) {
+  if (!props.icon) return null
+  const Icon = props.icon
+
+  return (
+    <span
+      className={cn(
+        'flex size-7 shrink-0 items-center justify-center rounded-lg bg-white/8 text-white/65 transition-colors',
+        'group-hover/menu-button:bg-white/12 group-hover/menu-button:text-white',
+        'group-data-active/menu-button:bg-brand-highlight group-data-active/menu-button:text-white',
+        props.className
+      )}
+    >
+      <Icon className='shrink-0' />
+    </span>
+  )
+}
+
 /**
  * Sidebar navigation group component
  * Renders a group of navigation items, supporting regular links and collapsible submenus
@@ -63,8 +85,8 @@ export function NavGroup({ title, items }: NavGroupProps) {
   const href = useLocation({ select: (location) => location.href })
 
   return (
-    <SidebarGroup className='px-2 py-1'>
-      <SidebarGroupLabel className='text-muted-foreground/70 px-2 text-[11px] font-medium tracking-wider uppercase'>
+    <SidebarGroup className='px-3 py-1'>
+      <SidebarGroupLabel className='px-2 text-xs font-medium tracking-[0.1em] text-white/35 uppercase'>
         {title}
       </SidebarGroupLabel>
       <SidebarMenu>
@@ -127,7 +149,7 @@ function SidebarMenuLink({ item, href }: { item: NavLink; href: string }) {
         tooltip={item.title}
         render={<Link to={item.url} onClick={() => setOpenMobile(false)} />}
       >
-        {item.icon && <item.icon className='shrink-0' />}
+        <SidebarIconTile icon={item.icon} />
         <span className='min-w-0 flex-1 truncate'>{item.title}</span>
         {item.badge && <NavBadge>{item.badge}</NavBadge>}
       </SidebarMenuButton>
@@ -170,7 +192,7 @@ function SidebarMenuCollapsible({
         className='group/collapsible-trigger'
         render={<SidebarMenuButton tooltip={item.title} />}
       >
-        {item.icon && <item.icon className='shrink-0' />}
+        <SidebarIconTile icon={item.icon} />
         <span className='min-w-0 flex-1 truncate'>{item.title}</span>
         {item.badge && <NavBadge>{item.badge}</NavBadge>}
         <ChevronRight className='ms-auto size-4 shrink-0 transition-transform duration-200 group-data-[panel-open]/collapsible-trigger:rotate-90' />
@@ -219,7 +241,7 @@ function SidebarMenuCollapsedDropdown({
             />
           }
         >
-          {item.icon && <item.icon className='shrink-0' />}
+          <SidebarIconTile icon={item.icon} />
           <span className='min-w-0 flex-1 truncate'>{item.title}</span>
           {item.badge && <NavBadge>{item.badge}</NavBadge>}
           <ChevronRight className='ms-auto size-4 shrink-0 transition-transform duration-200 group-data-[popup-open]/dropdown-trigger:rotate-90' />

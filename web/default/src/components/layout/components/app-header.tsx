@@ -16,7 +16,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
+import { useMemo } from 'react'
+import { useLocation } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { useNotifications } from '@/hooks/use-notifications'
+import { useSidebarData } from '@/hooks/use-sidebar-data'
 import { useTopNavLinks } from '@/hooks/use-top-nav-links'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { LanguageSwitcher } from '@/components/language-switcher'
@@ -24,9 +28,8 @@ import { NotificationPopover } from '@/components/notification-popover'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { defaultTopNavLinks } from '../config/top-nav.config'
-import { type TopNavLink } from '../types'
+import { type NavGroup, type NavItem, type TopNavLink } from '../types'
 import { Header } from './header'
-import { SystemBrand } from './system-brand'
 import { TopNav } from './top-nav'
 
 /**
@@ -59,7 +62,7 @@ type AppHeaderProps = {
   navLinks?: TopNavLink[]
   /**
    * Whether to show top navigation bar
-   * @default true
+   * @default false
    */
   showTopNav?: boolean
   /**
@@ -68,7 +71,7 @@ type AppHeaderProps = {
   leftContent?: React.ReactNode
   /**
    * Whether to show search box
-   * @default true
+   * @default false
    */
   showSearch?: boolean
   /**
@@ -94,14 +97,22 @@ type AppHeaderProps = {
 
 export function AppHeader({
   navLinks = defaultTopNavLinks,
-  showTopNav = true,
+  showTopNav = false,
   leftContent,
-  showSearch = true,
+  showSearch = false,
   rightContent,
   showNotifications = true,
   showConfigDrawer = true,
   showProfileDropdown = true,
 }: AppHeaderProps) {
+  const { t } = useTranslation()
+  const pathname = useLocation({ select: (location) => location.pathname })
+  const sidebarData = useSidebarData()
+  const title = useMemo(
+    () => resolveHeaderTitle(pathname, sidebarData.navGroups, t('Dashboard')),
+    [pathname, sidebarData.navGroups, t]
+  )
+
   // Prioritize dynamically generated links from backend
   const dynamicLinks = useTopNavLinks()
   const links = dynamicLinks.length > 0 ? dynamicLinks : navLinks
@@ -112,14 +123,16 @@ export function AppHeader({
   return (
     <>
       <Header>
-        <SystemBrand variant='inline' />
-
         {leftContent ? (
           <div className='ms-2 flex items-center'>{leftContent}</div>
-        ) : null}
+        ) : (
+          <div className='ms-1 flex min-w-0 items-center text-sm leading-[1.43]'>
+            <span className='truncate text-white'>{title}</span>
+          </div>
+        )}
 
         {rightContent ?? (
-          <div className='ms-auto flex items-center gap-1 sm:gap-2'>
+          <div className='ms-auto flex items-center gap-2'>
             {showTopNav && (
               <div className='me-1 hidden lg:block'>
                 <TopNav links={links} />
@@ -128,6 +141,7 @@ export function AppHeader({
             {showSearch && <Search />}
             {showNotifications && (
               <NotificationPopover
+                className='size-8'
                 open={notifications.popoverOpen}
                 onOpenChange={notifications.setPopoverOpen}
                 unreadCount={notifications.unreadCount}
@@ -138,12 +152,68 @@ export function AppHeader({
                 loading={notifications.loading}
               />
             )}
-            <LanguageSwitcher />
+            <LanguageSwitcher tone='app' />
             {showConfigDrawer && <ConfigDrawer />}
-            {showProfileDropdown && <ProfileDropdown />}
+            {showProfileDropdown && <ProfileDropdown size='default' />}
           </div>
         )}
       </Header>
     </>
   )
+}
+
+function resolveHeaderTitle(
+  pathname: string,
+  navGroups: NavGroup[],
+  fallback: string
+) {
+  const title = findNavTitle(pathname, navGroups)
+  if (title) return title
+
+  const segment = pathname.split('/').filter(Boolean).at(0)
+  if (!segment) return fallback
+
+  return segment
+    .split('-')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ')
+}
+
+function findNavTitle(pathname: string, navGroups: NavGroup[]) {
+  for (const group of navGroups) {
+    for (const item of group.items) {
+      const title = findItemTitle(pathname, item)
+      if (title) return title
+    }
+  }
+  return null
+}
+
+function findItemTitle(pathname: string, item: NavItem): string | null {
+  if (item.type === 'chat-presets') {
+    return pathname.startsWith('/chat') ? item.title : null
+  }
+
+  if ('items' in item && item.items) {
+    for (const child of item.items) {
+      const childPath = String(child.url).split('?')[0]
+      if (pathname === childPath || pathname.startsWith(`${childPath}/`)) {
+        return child.title
+      }
+    }
+    return null
+  }
+
+  if ('url' in item && item.url) {
+    const itemPath = String(item.url).split('?')[0]
+    if (pathname === itemPath || pathname.startsWith(`${itemPath}/`)) {
+      return item.title
+    }
+  }
+
+  if (item.activeUrls?.some((url) => pathname.startsWith(String(url)))) {
+    return item.title
+  }
+
+  return null
 }

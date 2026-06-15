@@ -259,7 +259,7 @@ export function DynamicPricingBreakdown({
                   <div className='mb-1.5 flex flex-wrap items-center gap-1.5'>
                     <Badge
                       variant='secondary'
-                      className='bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300'
+                      className='bg-brand-highlight/10 text-brand-dark dark:text-brand-highlight'
                     >
                       {tier.label || t('Default')}
                     </Badge>
@@ -322,19 +322,17 @@ export function DynamicPricingBreakdown({
                 className: 'text-muted-foreground py-2 font-medium',
                 cellClassName: 'py-2.5 align-top',
                 cell: (tier) => {
-                  const condSummary = formatConditionSummary(
-                    tier.conditions,
-                    t
-                  )
+                  const condSummary = formatConditionSummary(tier.conditions, t)
                   const isMatched =
                     normalizedMatchedTierLabel !== '' &&
-                    normalizeTierLabel(tier.label) === normalizedMatchedTierLabel
+                    normalizeTierLabel(tier.label) ===
+                      normalizedMatchedTierLabel
                   return (
                     <>
                       <div className='flex flex-wrap items-center gap-1.5'>
                         <Badge
                           variant='secondary'
-                          className='bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300'
+                          className='bg-brand-highlight/10 text-brand-dark dark:text-brand-highlight'
                         >
                           {tier.label || t('Default')}
                         </Badge>

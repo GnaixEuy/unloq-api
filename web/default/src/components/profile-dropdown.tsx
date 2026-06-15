@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '@/stores/auth-store'
 import { getUserAvatarFallback, getUserAvatarStyle } from '@/lib/avatar'
 import { ROLE } from '@/lib/roles'
+import { cn } from '@/lib/utils'
 import useDialogState from '@/hooks/use-dialog'
 import { useUserDisplay } from '@/hooks/use-user-display'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -38,7 +39,11 @@ import { SignOutDialog } from '@/components/sign-out-dialog'
 
 const avatarFallbackClassName = 'font-semibold text-white'
 
-export function ProfileDropdown() {
+type ProfileDropdownProps = {
+  size?: 'sm' | 'default'
+}
+
+export function ProfileDropdown({ size = 'sm' }: ProfileDropdownProps) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [open, setOpen] = useDialogState()
@@ -51,16 +56,23 @@ export function ProfileDropdown() {
     () => getUserAvatarStyle(avatarName),
     [avatarName]
   )
+  const triggerSizeClassName = size === 'default' ? 'size-8' : 'size-6'
+  const fallbackTextClassName = size === 'default' ? 'text-sm' : 'text-[11px]'
 
   return (
     <>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger
-          render={<Button variant='ghost' className='relative size-6 p-0' />}
+          render={
+            <Button
+              variant='ghost'
+              className={cn('relative p-0', triggerSizeClassName)}
+            />
+          }
         >
-          <Avatar className='size-6'>
+          <Avatar className={triggerSizeClassName}>
             <AvatarFallback
-              className={`${avatarFallbackClassName} text-[11px]`}
+              className={`${avatarFallbackClassName} ${fallbackTextClassName}`}
               style={avatarFallbackStyle}
             >
               {avatarFallback}

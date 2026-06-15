@@ -34,7 +34,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-export function LanguageSwitcher() {
+type LanguageSwitcherProps = {
+  tone?: 'default' | 'app'
+}
+
+export function LanguageSwitcher({ tone = 'default' }: LanguageSwitcherProps) {
   const { i18n, t } = useTranslation()
   const user = useAuthStore((s) => s.auth.user)
   const currentLanguage = normalizeInterfaceLanguage(i18n.language)
@@ -56,9 +60,44 @@ export function LanguageSwitcher() {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger
-        render={<Button variant='ghost' size='icon' className='h-9 w-9' />}
+        render={
+          <Button
+            variant='ghost'
+            size={tone === 'app' ? 'default' : 'icon'}
+            className={cn(
+              tone === 'app'
+                ? 'h-8 gap-1 rounded-[10px] border border-white/15 px-2.5 text-xs hover:bg-white/5'
+                : 'h-9 w-9'
+            )}
+          />
+        }
       >
-        <Languages className='size-[1.2rem]' />
+        {tone === 'app' ? (
+          <>
+            <span
+              className={cn(
+                'font-semibold',
+                currentLanguage === 'en'
+                  ? 'text-brand-highlight'
+                  : 'text-brand-mint/45'
+              )}
+            >
+              EN
+            </span>
+            <span className='text-brand-mint/20'>|</span>
+            <span
+              className={cn(
+                currentLanguage === 'zh'
+                  ? 'text-brand-highlight'
+                  : 'text-brand-mint/45'
+              )}
+            >
+              中
+            </span>
+          </>
+        ) : (
+          <Languages className='size-[1.2rem]' />
+        )}
         <span className='sr-only'>{t('Change language')}</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end'>

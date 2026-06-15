@@ -16,13 +16,31 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
+import { useMemo } from 'react'
+import { Link } from '@tanstack/react-router'
+import { LogOut } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { useTranslation } from 'react-i18next'
+import { useAuthStore } from '@/stores/auth-store'
+import { getUserAvatarFallback } from '@/lib/avatar'
 import { MOTION_TRANSITION, MOTION_VARIANTS } from '@/lib/motion'
 import { useLayout } from '@/context/layout-provider'
+import useDialogState from '@/hooks/use-dialog'
 import { useSidebarView } from '@/hooks/use-sidebar-view'
-import { Sidebar, SidebarContent, SidebarRail } from '@/components/ui/sidebar'
+import { useUserDisplay } from '@/hooks/use-user-display'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarRail,
+} from '@/components/ui/sidebar'
+import { SignOutDialog } from '@/components/sign-out-dialog'
 import { NavGroup } from './nav-group'
 import { SidebarViewHeader } from './sidebar-view-header'
+import { SystemBrand } from './system-brand'
 
 /**
  * Application sidebar.
@@ -48,9 +66,13 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible={collapsible} variant={variant}>
+      <SidebarHeader className='border-sidebar-border h-[77px] justify-center border-b py-0 pr-3 pl-5'>
+        <SystemBrand variant='sidebar' />
+      </SidebarHeader>
+
       {view && <SidebarViewHeader view={view} />}
 
-      <SidebarContent className='py-2'>
+      <SidebarContent className='px-0 pt-4 pb-3'>
         <AnimatePresence mode='wait' initial={false}>
           <motion.div
             key={key}
@@ -69,7 +91,59 @@ export function AppSidebar() {
         </AnimatePresence>
       </SidebarContent>
 
+      <SidebarUserBlock />
+
       <SidebarRail />
     </Sidebar>
+  )
+}
+
+function SidebarUserBlock() {
+  const { t } = useTranslation()
+  const [open, setOpen] = useDialogState()
+  const user = useAuthStore((state) => state.auth.user)
+  const { displayName, roleLabel } = useUserDisplay(user)
+  const avatarName = user?.username || displayName
+  const avatarFallback = useMemo(
+    () => getUserAvatarFallback(avatarName),
+    [avatarName]
+  )
+
+  return (
+    <>
+      <SidebarFooter className='border-sidebar-border border-t px-4 py-[17px] group-data-[collapsible=icon]:px-2'>
+        <div className='flex items-center gap-3 group-data-[collapsible=icon]:justify-center'>
+          <Link
+            to='/profile'
+            className='focus-visible:ring-brand-highlight/40 flex min-w-0 flex-1 items-center gap-3 rounded-[10px] outline-none group-data-[collapsible=icon]:flex-none focus-visible:ring-2'
+          >
+            <Avatar className='size-8'>
+              <AvatarFallback className='bg-brand-highlight text-sm font-semibold text-white'>
+                {avatarFallback}
+              </AvatarFallback>
+            </Avatar>
+            <div className='min-w-0 flex-1 overflow-hidden group-data-[collapsible=icon]:hidden'>
+              <div className='truncate text-sm leading-5 text-white'>
+                {displayName || user?.username || t('User')}
+              </div>
+              <div className='truncate text-xs leading-4 text-white/45'>
+                {roleLabel || user?.group || '-'}
+              </div>
+            </div>
+          </Link>
+          <Button
+            type='button'
+            variant='ghost'
+            size='icon-sm'
+            className='size-7 shrink-0 text-white/45 group-data-[collapsible=icon]:hidden hover:bg-white/10 hover:text-white'
+            aria-label={t('Sign out')}
+            onClick={() => setOpen(true)}
+          >
+            <LogOut />
+          </Button>
+        </div>
+      </SidebarFooter>
+      <SignOutDialog open={!!open} onOpenChange={setOpen} />
+    </>
   )
 }

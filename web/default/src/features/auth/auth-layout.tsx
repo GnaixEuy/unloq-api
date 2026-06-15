@@ -18,6 +18,8 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
+import { DEFAULT_LOGO, DEFAULT_SYSTEM_NAME } from '@/lib/constants'
+import { cn } from '@/lib/utils'
 import { useSystemConfig } from '@/hooks/use-system-config'
 import { Skeleton } from '@/components/ui/skeleton'
 
@@ -28,28 +30,50 @@ type AuthLayoutProps = {
 export function AuthLayout({ children }: AuthLayoutProps) {
   const { t } = useTranslation()
   const { systemName, logo, loading } = useSystemConfig()
+  const usesDefaultLogo = !logo || logo === DEFAULT_LOGO
+  const authLogo = usesDefaultLogo ? '/scplus-logo-dark.svg' : logo
+  const showWordmarkOnly = usesDefaultLogo && systemName === DEFAULT_SYSTEM_NAME
 
   return (
     <div className='relative grid h-svh max-w-none'>
       <Link
         to='/'
         className='absolute top-4 left-4 z-10 flex items-center gap-2 transition-opacity hover:opacity-80 sm:top-8 sm:left-8'
+        aria-label={systemName}
       >
-        <div className='relative h-8 w-8'>
+        <div
+          className={cn(
+            'relative',
+            usesDefaultLogo ? 'h-9 w-[140px]' : 'h-8 w-8'
+          )}
+        >
           {loading ? (
-            <Skeleton className='absolute inset-0 rounded-full' />
+            <Skeleton
+              className={cn(
+                'absolute inset-0',
+                usesDefaultLogo ? 'rounded-none' : 'rounded-full'
+              )}
+            />
           ) : (
             <img
-              src={logo}
+              src={authLogo}
               alt={t('Logo')}
-              className='h-8 w-8 rounded-full object-cover'
+              className={cn(
+                usesDefaultLogo
+                  ? 'h-9 w-[140px] rounded-none object-contain'
+                  : 'h-8 w-8 rounded-full object-cover'
+              )}
             />
           )}
         </div>
         {loading ? (
-          <Skeleton className='h-6 w-24' />
+          <Skeleton className={cn('h-6 w-24', showWordmarkOnly && 'sr-only')} />
         ) : (
-          <h1 className='text-xl font-medium'>{systemName}</h1>
+          <h1
+            className={cn('text-xl font-medium', showWordmarkOnly && 'sr-only')}
+          >
+            {systemName}
+          </h1>
         )}
       </Link>
       <div className='container flex items-center pt-16 sm:pt-0'>

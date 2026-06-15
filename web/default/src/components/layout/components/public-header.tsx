@@ -20,6 +20,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate, useRouterState } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '@/stores/auth-store'
+import { DEFAULT_LOGO, DEFAULT_SYSTEM_NAME } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import { useNotifications } from '@/hooks/use-notifications'
 import { useSystemConfig } from '@/hooks/use-system-config'
@@ -94,6 +95,10 @@ export function PublicHeader(props: PublicHeaderProps) {
   const user = auth.user
   const isAuthenticated = !!user
   const displaySiteName = customSiteName || systemName
+  const usesDefaultLogo = !systemLogo || systemLogo === DEFAULT_LOGO
+  const publicLogo = usesDefaultLogo ? '/scplus-logo-dark.svg' : systemLogo
+  const showWordmarkOnly =
+    !customLogo && usesDefaultLogo && displaySiteName === DEFAULT_SYSTEM_NAME
   const links = dynamicLinks.length > 0 ? dynamicLinks : navLinks
 
   useEffect(() => {
@@ -192,22 +197,43 @@ export function PublicHeader(props: PublicHeaderProps) {
             <Link
               to={homeUrl}
               className='group flex shrink-0 items-center gap-2.5'
+              aria-label={displaySiteName}
             >
-              <div className='flex size-7 shrink-0 items-center justify-center transition-all duration-300 group-hover:scale-105'>
+              <div
+                className={cn(
+                  'flex shrink-0 items-center justify-center transition-all duration-300 group-hover:scale-105',
+                  !customLogo && usesDefaultLogo ? 'h-9 w-[140px]' : 'size-7'
+                )}
+              >
                 {loading ? (
-                  <Skeleton className='size-full rounded-lg' />
+                  <Skeleton
+                    className={cn(
+                      !customLogo && usesDefaultLogo
+                        ? 'h-9 w-[140px] rounded-none'
+                        : 'size-full rounded-lg'
+                    )}
+                  />
                 ) : customLogo ? (
                   customLogo
                 ) : (
                   <HeaderLogo
-                    src={systemLogo}
+                    src={publicLogo}
                     loading={loading}
                     logoLoaded={logoLoaded}
-                    className='size-full rounded-lg object-contain'
+                    className={cn(
+                      usesDefaultLogo
+                        ? 'h-9 w-[140px] rounded-none object-contain'
+                        : 'size-full rounded-lg object-contain'
+                    )}
                   />
                 )}
               </div>
-              <span className='text-sm font-semibold tracking-tight'>
+              <span
+                className={cn(
+                  'text-sm font-semibold tracking-tight',
+                  showWordmarkOnly && 'sr-only'
+                )}
+              >
                 {loading ? <Skeleton className='h-4 w-16' /> : displaySiteName}
               </span>
             </Link>

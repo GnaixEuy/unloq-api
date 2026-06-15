@@ -30,7 +30,7 @@ function Table({ className, ...props }: React.ComponentProps<'table'>) {
       <table
         data-slot='table'
         className={cn(
-          'w-full caption-bottom text-sm tabular-nums [&_td]:text-sm [&_td_*]:text-sm [&_th]:text-sm [&_th_*]:text-sm',
+          'w-full caption-bottom text-[12px] tabular-nums [&_td]:text-[12px] [&_td_*]:text-[12px] [&_th]:text-[12px] [&_th_*]:text-[12px]',
           className
         )}
         {...props}
@@ -43,7 +43,7 @@ function TableHeader({ className, ...props }: React.ComponentProps<'thead'>) {
   return (
     <thead
       data-slot='table-header'
-      className={cn('[&_tr]:border-b', className)}
+      className={cn('bg-muted [&_tr]:border-b', className)}
       {...props}
     />
   )
@@ -77,7 +77,7 @@ function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
     <tr
       data-slot='table-row'
       className={cn(
-        'group hover:[background-color:color-mix(in_oklch,var(--muted)_50%,var(--background))] has-aria-expanded:[background-color:color-mix(in_oklch,var(--muted)_50%,var(--background))] data-[state=selected]:bg-muted border-b transition-colors',
+        'group hover:bg-muted/70 has-aria-expanded:bg-muted/70 data-[state=selected]:bg-muted border-b transition-colors',
         className
       )}
       {...props}
@@ -90,7 +90,7 @@ function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
     <th
       data-slot='table-head'
       className={cn(
-        'text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0',
+        'text-muted-foreground h-10 px-3 text-left align-middle font-normal whitespace-nowrap first:ps-6 last:pe-6 [&:has([role=checkbox])]:pr-0',
         className
       )}
       {...props}
@@ -103,7 +103,7 @@ function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
     <td
       data-slot='table-cell'
       className={cn(
-        'p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0',
+        'text-brand-dark px-3 py-2.5 align-middle whitespace-nowrap first:ps-6 last:pe-6 [&:has([role=checkbox])]:pr-0',
         className
       )}
       {...props}

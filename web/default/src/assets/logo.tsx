@@ -28,15 +28,18 @@ export function Logo({ className, ...props }: SVGProps<SVGSVGElement>) {
       height='24'
       width='24'
       fill='none'
-      stroke='currentColor'
-      strokeWidth='2'
-      strokeLinecap='round'
-      strokeLinejoin='round'
       className={cn('size-6', className)}
       {...props}
     >
       <title>New API</title>
-      <path d='M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3' />
+      <image
+        href='/brand-mark.svg'
+        x='0'
+        y='0'
+        width='24'
+        height='24'
+        preserveAspectRatio='xMidYMid meet'
+      />
     </svg>
   )
 }
