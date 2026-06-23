@@ -181,17 +181,17 @@ function SetupGuideBackdrop(props: { compact?: boolean }) {
     <>
       <div
         className={cn(
-          'pointer-events-none absolute inset-0 bg-[linear-gradient(112deg,#12344d_0%,#1d376d_58%,#263fa6_100%)]',
+          'pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_48%_120%_at_78%_0%,color-mix(in_oklch,var(--primary)_8%,transparent)_0%,transparent_62%),linear-gradient(112deg,color-mix(in_oklch,var(--card)_98%,var(--primary)_2%)_0%,color-mix(in_oklch,var(--card)_94%,var(--muted)_6%)_48%,color-mix(in_oklch,var(--background)_92%,var(--accent)_8%)_100%)] dark:opacity-65',
           props.compact
-            ? '[mask-image:linear-gradient(90deg,black_0%,black_50%,transparent_82%)] opacity-10'
-            : 'opacity-100'
+            ? '[mask-image:linear-gradient(90deg,black_0%,black_48%,transparent_74%)] opacity-55'
+            : 'opacity-85'
         )}
         aria-hidden='true'
       />
       <div
         className={cn(
-          'pointer-events-none absolute inset-y-0 right-0 hidden overflow-hidden font-mono text-white/10 sm:block',
-          props.compact ? 'w-1/2 opacity-20' : 'w-[58%] opacity-60'
+          'text-foreground/5 dark:text-foreground/8 pointer-events-none absolute inset-y-0 right-0 hidden overflow-hidden font-mono sm:block',
+          props.compact ? 'w-1/2 opacity-45' : 'w-[58%] opacity-75'
         )}
         aria-hidden='true'
       >
@@ -207,7 +207,7 @@ function SetupGuideBackdrop(props: { compact?: boolean }) {
         </pre>
       </div>
       <div
-        className='pointer-events-none absolute inset-0 bg-linear-to-br from-white/6 via-transparent to-black/8'
+        className='from-background/35 to-background/70 dark:from-background/20 dark:to-background/80 pointer-events-none absolute inset-0 bg-linear-to-b via-transparent'
         aria-hidden='true'
       />
     </>
@@ -226,47 +226,44 @@ function StartStepItem(props: {
     <li className='relative flex gap-3 pb-2.5 last:pb-0'>
       {!props.isLast && (
         <span
-          className='absolute top-9 bottom-0 left-4 w-px bg-white/10'
+          className='bg-border absolute top-9 bottom-0 left-4 w-px'
           aria-hidden='true'
         />
       )}
       <span
         className={cn(
-          'relative z-10 flex size-8 shrink-0 items-center justify-center rounded-lg border border-white/15 bg-white/10 text-white shadow-none',
-          props.step.completed &&
-            'border-brand-highlight/40 bg-brand-highlight/20'
+          'bg-background relative z-10 flex size-8 shrink-0 items-center justify-center rounded-lg border shadow-xs',
+          props.step.completed && 'border-success/30 bg-success/10'
         )}
       >
         <StatusIcon
-          className={
-            props.step.completed ? 'text-brand-highlight size-4' : 'size-4'
-          }
+          className={props.step.completed ? 'text-success size-4' : 'size-4'}
           aria-hidden='true'
         />
       </span>
 
       <Link
         to={props.step.to}
-        className='focus-visible:ring-brand-highlight/50 flex min-w-0 flex-1 items-center justify-between gap-3 rounded-[10px] border border-white/10 bg-white/8 px-3 py-2.5 text-left text-white shadow-none transition-colors outline-none hover:bg-white/12 focus-visible:ring-2'
+        className='bg-background/70 hover:bg-muted/50 focus-visible:ring-ring flex min-w-0 flex-1 items-center justify-between gap-3 rounded-xl border px-3 py-2.5 text-left shadow-xs transition-colors outline-none focus-visible:ring-2'
       >
         <span className='flex min-w-0 items-start gap-2.5'>
-          <span className='mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg bg-white/10 text-white/85'>
+          <span className='bg-muted mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg'>
             <Icon className='size-3.5' aria-hidden='true' />
           </span>
           <span className='flex min-w-0 flex-col gap-0.5'>
             <span className='flex items-center gap-2 text-sm font-medium'>
-              <span className='font-mono text-xs text-white/50 tabular-nums'>
+              <span className='text-muted-foreground font-mono text-xs tabular-nums'>
                 {props.index + 1}.
               </span>
               <span className='truncate'>{props.step.title}</span>
             </span>
-            <span className='line-clamp-1 text-xs text-white/58'>
+            <span className='text-muted-foreground line-clamp-1 text-xs'>
               {props.step.description}
             </span>
           </span>
         </span>
         <ArrowRight
-          className='size-4 shrink-0 text-white/45'
+          className='text-muted-foreground size-4 shrink-0'
           aria-hidden='true'
         />
       </Link>
@@ -321,7 +318,7 @@ function RequestPreview(props: {
       initial={shouldReduceMotion ? false : { opacity: 0, y: 10, scale: 0.98 }}
       animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
       transition={MOTION_TRANSITION.slow}
-      className='relative overflow-hidden rounded-[14px] border border-white/10 bg-white/10 p-3 text-white shadow-none backdrop-blur'
+      className='bg-background/75 relative overflow-hidden rounded-2xl border p-3 shadow-sm backdrop-blur'
     >
       {!shouldReduceMotion && (
         <motion.div
@@ -332,16 +329,16 @@ function RequestPreview(props: {
         />
       )}
 
-      <div className='flex items-center justify-between gap-3 border-b border-white/10 pb-3'>
+      <div className='flex items-center justify-between gap-3 border-b pb-3'>
         <div className='flex min-w-0 items-center gap-2'>
-          <span className='flex size-8 shrink-0 items-center justify-center rounded-lg bg-white/10 text-white'>
+          <span className='bg-muted flex size-8 shrink-0 items-center justify-center rounded-lg'>
             <TerminalSquare className='size-4' aria-hidden='true' />
           </span>
           <div className='min-w-0'>
             <div className='truncate text-sm font-medium'>
               {t('First API request')}
             </div>
-            <div className='truncate text-xs text-white/58'>
+            <div className='text-muted-foreground truncate text-xs'>
               {props.example.ready
                 ? props.example.keyName
                 : t('Create an API key to unlock the real request')}
@@ -352,7 +349,7 @@ function RequestPreview(props: {
           <Button
             variant='outline'
             size='sm'
-            className='h-7 gap-1.5 border-white/20 bg-white/8 px-2 text-xs text-white hover:bg-white/14 hover:text-white'
+            className='h-7 gap-1.5 px-2 text-xs'
             disabled={isCopying}
             onClick={handleCopyRequest}
             aria-label={t('Copy ready-to-run curl')}
@@ -361,17 +358,13 @@ function RequestPreview(props: {
             {isCopying ? t('Loading') : t('Copy')}
           </Button>
         ) : (
-          <Button
-            size='sm'
-            className='bg-brand-highlight hover:bg-brand-highlight/90 h-7 px-2.5 text-xs text-white'
-            render={<Link to='/keys' />}
-          >
+          <Button size='sm' variant='outline' render={<Link to='/keys' />}>
             {t('Create API Key')}
           </Button>
         )}
       </div>
 
-      <div className='my-3 rounded-[10px] bg-[#023545]/70 p-3 font-mono text-xs'>
+      <div className='bg-foreground/[0.035] my-3 rounded-xl p-3 font-mono text-xs'>
         <div className='mb-2 flex items-center gap-1.5'>
           <span className='bg-destructive size-2 rounded-full' />
           <span className='bg-warning size-2 rounded-full' />
@@ -381,7 +374,7 @@ function RequestPreview(props: {
           {previewLines.map((line, index) => (
             <code
               key={`${line}-${index}`}
-              className='truncate text-white/58'
+              className='text-muted-foreground truncate'
               title={line}
             >
               {line}
@@ -397,18 +390,18 @@ function RequestPreview(props: {
           return (
             <div
               key={signal.label}
-              className='flex items-center justify-between gap-3 rounded-[10px] bg-white/8 px-3 py-2'
+              className='bg-muted/40 flex items-center justify-between gap-3 rounded-xl px-3 py-2'
             >
               <span className='flex min-w-0 items-center gap-2'>
                 <Icon
-                  className='size-3.5 shrink-0 text-white/55'
+                  className='text-muted-foreground size-3.5 shrink-0'
                   aria-hidden='true'
                 />
                 <span className='truncate text-xs font-medium'>
                   {signal.label}
                 </span>
               </span>
-              <span className='shrink-0 text-xs text-white/58'>
+              <span className='text-muted-foreground shrink-0 text-xs'>
                 {signal.value}
               </span>
             </div>
@@ -425,10 +418,10 @@ function QuickActionItem(props: { action: QuickAction }) {
   return (
     <Button
       variant='outline'
-      className='h-auto justify-start rounded-[10px] border-black/[0.06] bg-white px-3 py-3 text-left shadow-none hover:bg-[#f7fbf9]'
+      className='h-auto justify-start rounded-xl px-3 py-3 text-left'
       render={<Link to={props.action.to} />}
     >
-      <span className='bg-brand-highlight/10 text-brand-highlight flex size-9 shrink-0 items-center justify-center rounded-lg'>
+      <span className='bg-muted flex size-9 shrink-0 items-center justify-center rounded-lg'>
         <Icon className='size-4' aria-hidden='true' />
       </span>
       <span className='flex min-w-0 flex-1 flex-col gap-0.5'>
@@ -450,7 +443,7 @@ function CompactQuickAction(props: { action: QuickAction }) {
     <Button
       variant='outline'
       size='sm'
-      className='h-8 min-w-24 gap-1.5 border-black/[0.06] bg-white px-2.5 shadow-none hover:bg-[#f7fbf9]'
+      className='bg-background/70 h-8 min-w-24 gap-1.5 px-2.5'
       render={<Link to={props.action.to} />}
     >
       <Icon data-icon='inline-start' />
@@ -605,7 +598,9 @@ export function OverviewDashboard() {
 
   const completedStepCount = startSteps.filter((step) => step.completed).length
   const setupComplete = completedStepCount === startSteps.length
-  const setupGuideExpanded = manualSetupGuideExpanded ?? !setupComplete
+  const setupStatusReady = apiKeysQuery.isFetched && Boolean(user)
+  const setupGuideExpanded =
+    manualSetupGuideExpanded ?? (setupStatusReady && !setupComplete)
   const showLeftContentPanels =
     isAdmin || showApiInfoPanel || showAnnouncementsPanel || showFAQPanel
   const showContentPanels = showLeftContentPanels || showUptimePanel
@@ -620,21 +615,21 @@ export function OverviewDashboard() {
     <div className='flex flex-col gap-4'>
       {setupGuideExpanded ? (
         <CardStaggerContainer className='grid items-stretch gap-4 xl:grid-cols-[minmax(0,1fr)_22rem]'>
-          <CardStaggerItem className='h-full overflow-hidden rounded-[14px] border-0 bg-[#12344d] shadow-[0_10px_30px_rgba(15,23,42,0.06)]'>
+          <CardStaggerItem className='bg-card h-full overflow-hidden rounded-2xl border shadow-xs'>
             <div className='relative h-full overflow-hidden p-4 sm:p-5'>
               <SetupGuideBackdrop />
               <div className='relative grid gap-5 lg:grid-cols-[minmax(0,1fr)_21rem]'>
                 <div className='flex min-w-0 flex-col gap-5'>
                   <div className='flex flex-wrap items-start justify-between gap-3'>
                     <div className='flex max-w-2xl flex-col gap-1'>
-                      <div className='flex items-center gap-2 text-xs font-medium tracking-wider text-white/55 uppercase'>
+                      <div className='text-muted-foreground flex items-center gap-2 text-xs font-medium tracking-wider uppercase'>
                         <ListChecks className='size-3.5' aria-hidden='true' />
                         {t('Get started')}
                       </div>
-                      <h3 className='text-xl font-semibold tracking-tight text-white sm:text-2xl'>
+                      <h3 className='text-xl font-semibold tracking-tight sm:text-2xl'>
                         {t('Build on your API gateway in minutes')}
                       </h3>
-                      <p className='max-w-xl text-sm leading-relaxed text-white/65'>
+                      <p className='text-muted-foreground max-w-xl text-sm leading-relaxed'>
                         {t(
                           'A focused home for keys, balance, routing, and service health.'
                         )}
@@ -644,24 +639,19 @@ export function OverviewDashboard() {
                       <Button
                         variant='outline'
                         size='sm'
-                        className='border-white/20 bg-white/8 text-white hover:bg-white/14 hover:text-white'
                         onClick={handleSetupGuideToggle}
                       >
                         <ChevronUp data-icon='inline-start' />
                         {t('Hide setup guide')}
                       </Button>
-                      <Button
-                        size='sm'
-                        className='bg-brand-highlight hover:bg-brand-highlight/90 text-white'
-                        render={<Link to='/keys' />}
-                      >
+                      <Button size='sm' render={<Link to='/keys' />}>
                         <KeyRound data-icon='inline-start' />
                         {t('Create API Key')}
                       </Button>
                     </div>
                   </div>
 
-                  <ol className='rounded-[14px] border border-white/10 bg-white/8 p-2 backdrop-blur'>
+                  <ol className='bg-background/45 rounded-2xl border p-2 backdrop-blur'>
                     {startSteps.map((step, index) => (
                       <StartStepItem
                         key={step.title}
@@ -681,13 +671,13 @@ export function OverviewDashboard() {
             </div>
           </CardStaggerItem>
 
-          <CardStaggerItem className='h-full rounded-[14px] border border-black/[0.06] bg-white p-4 shadow-[0_10px_30px_rgba(15,23,42,0.06)] sm:p-5'>
+          <CardStaggerItem className='bg-card h-full rounded-2xl border p-4 shadow-xs sm:p-5'>
             <div className='flex h-full flex-col gap-4'>
               <div className='flex flex-col gap-1'>
                 <div className='text-muted-foreground text-xs font-medium tracking-wider uppercase'>
                   {t('Recommended actions')}
                 </div>
-                <h3 className='text-brand-dark text-lg font-semibold tracking-tight'>
+                <h3 className='text-lg font-semibold tracking-tight'>
                   {t('Keep the platform ready')}
                 </h3>
               </div>
@@ -701,13 +691,13 @@ export function OverviewDashboard() {
         </CardStaggerContainer>
       ) : (
         <CardStaggerContainer>
-          <CardStaggerItem className='overflow-hidden rounded-[14px] border border-black/[0.06] bg-white shadow-[0_10px_30px_rgba(15,23,42,0.06)]'>
+          <CardStaggerItem className='bg-card overflow-hidden rounded-2xl border shadow-xs'>
             <div className='relative overflow-hidden px-4 py-3 sm:px-5'>
               <SetupGuideBackdrop compact />
               <div className='relative flex flex-wrap items-center justify-between gap-3'>
                 <div className='flex min-w-0 items-center gap-3'>
-                  <span className='bg-brand-highlight/10 text-brand-highlight flex size-9 shrink-0 items-center justify-center rounded-xl'>
-                    <Check className='size-4' aria-hidden='true' />
+                  <span className='bg-background/70 flex size-9 shrink-0 items-center justify-center rounded-xl border shadow-xs'>
+                    <Check className='text-success size-4' aria-hidden='true' />
                   </span>
                   <div className='min-w-0'>
                     <div className='flex items-center gap-2'>
@@ -716,7 +706,7 @@ export function OverviewDashboard() {
                           ? t('Setup guide complete')
                           : t('Setup guide')}
                       </h3>
-                      <span className='bg-brand-highlight/10 text-brand-highlight rounded-md px-2 py-0.5 text-xs'>
+                      <span className='text-muted-foreground bg-background/60 rounded-md border px-2 py-0.5 text-xs'>
                         {t('Setup progress: {{completed}}/{{total}}', {
                           completed: completedStepCount,
                           total: startSteps.length,
@@ -740,7 +730,7 @@ export function OverviewDashboard() {
                   <Button
                     variant='outline'
                     size='sm'
-                    className='h-8 min-w-28 border-black/[0.06] bg-white shadow-none hover:bg-[#f7fbf9]'
+                    className='bg-background/70 h-8 min-w-28'
                     onClick={handleSetupGuideToggle}
                   >
                     <ChevronDown data-icon='inline-start' />

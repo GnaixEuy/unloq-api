@@ -20,10 +20,10 @@ export const staticDataTableClassNames = {
   container: 'overflow-hidden rounded-md border',
   sectionContainer: 'border-border/60 rounded-lg',
   embeddedContainer: 'rounded-none border-0',
-  compactTable: 'text-[12px]',
+  compactTable: 'text-sm',
   compactHeaderRow: 'hover:bg-transparent',
   mutedHeaderRow:
-    '[background-color:color-mix(in_oklch,var(--muted)_30%,var(--background))] hover:[background-color:color-mix(in_oklch,var(--muted)_30%,var(--background))]',
+    '[background-color:var(--table-header)] hover:[background-color:var(--table-header-hover)]',
   compactHeaderCell:
     'text-muted-foreground py-2 text-[10px] font-medium tracking-wider uppercase',
   compactHeaderCellRight:
@@ -37,9 +37,9 @@ export const staticDataTableClassNames = {
   compactMutedNumericCell: 'text-muted-foreground py-2.5 text-right font-mono',
   topCell: 'py-2 align-top',
   topMutedCell: 'text-muted-foreground py-2 align-top',
-  codeCell: 'font-mono text-[12px]',
-  mutedCell: 'text-muted-foreground text-[12px]',
-  mutedCodeCell: 'text-muted-foreground font-mono text-[12px]',
+  codeCell: 'font-mono text-sm',
+  mutedCell: 'text-muted-foreground text-sm',
+  mutedCodeCell: 'text-muted-foreground font-mono text-sm',
   topNumericCell: 'py-2 text-right font-mono',
   mediumCell: 'font-medium',
   actionHeaderCell: 'text-right',

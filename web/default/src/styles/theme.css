@@ -149,6 +149,32 @@ For commercial licensing, please contact support@quantumnous.com
   --sidebar-ring: var(--brand-highlight);
   --skeleton-base: #edf6f2;
   --skeleton-highlight: #fbfefd;
+  --table-row: var(--background);
+  --table-header: color-mix(
+    in oklch,
+    var(--brand-dark) 2.5%,
+    var(--background)
+  );
+  --table-header-hover: color-mix(
+    in oklch,
+    var(--brand-dark) 5%,
+    var(--background)
+  );
+  --table-disabled: color-mix(
+    in oklch,
+    var(--brand-dark) 7%,
+    var(--background)
+  );
+  --table-disabled-hover: color-mix(
+    in oklch,
+    var(--brand-dark) 10%,
+    var(--background)
+  );
+  --table-disabled-border: color-mix(
+    in oklch,
+    var(--brand-dark) 24%,
+    var(--background)
+  );
 }
 
 .dark {
@@ -194,4 +220,30 @@ For commercial licensing, please contact support@quantumnous.com
   --sidebar-ring: var(--brand-highlight);
   --skeleton-base: #0a5362;
   --skeleton-highlight: #116d78;
+  --table-row: var(--background);
+  --table-header: color-mix(
+    in oklch,
+    var(--brand-mint) 7%,
+    var(--background)
+  );
+  --table-header-hover: color-mix(
+    in oklch,
+    var(--brand-mint) 10%,
+    var(--background)
+  );
+  --table-disabled: color-mix(
+    in oklch,
+    var(--brand-mint) 10%,
+    var(--background)
+  );
+  --table-disabled-hover: color-mix(
+    in oklch,
+    var(--brand-mint) 14%,
+    var(--background)
+  );
+  --table-disabled-border: color-mix(
+    in oklch,
+    var(--brand-mint) 34%,
+    var(--background)
+  );
 }
