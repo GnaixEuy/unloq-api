@@ -17,6 +17,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { api } from '@/lib/api'
+
 import { buildQueryParams } from './lib/utils'
 import type {
   GetLogsParams,
@@ -36,6 +37,10 @@ function buildApiPath(endpoint: string, isAdmin: boolean): string {
   return isAdmin ? endpoint : `${endpoint}/self`
 }
 
+function buildListApiPath(endpoint: string, isAdmin: boolean): string {
+  return isAdmin ? `${endpoint}/` : `${endpoint}/self`
+}
+
 async function fetchLogs<T>(
   endpoint: string,
   params: T,
@@ -47,7 +52,7 @@ async function fetchLogs<T>(
     page_size: paramRecord.page_size || 20,
     ...params,
   })
-  const path = buildApiPath(endpoint, isAdmin)
+  const path = buildListApiPath(endpoint, isAdmin)
   const res = await api.get(`${path}?${queryParams}`)
   return res.data
 }

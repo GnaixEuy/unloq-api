@@ -17,10 +17,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { useTranslation } from 'react-i18next'
-import { useAuthStore } from '@/stores/auth-store'
-import { Markdown } from '@/components/ui/markdown'
+
 import { PublicLayout } from '@/components/layout'
 import { Footer } from '@/components/layout/components/footer'
+import { Markdown } from '@/components/ui/markdown'
+import { useAuthStore } from '@/stores/auth-store'
+
 import { CTA, Features, Hero, HowItWorks, Stats } from './components'
 import { useHomePageContent } from './hooks'
 
@@ -40,21 +42,15 @@ export function Home() {
     )
   }
 
-  if (content) {
+  if (content && isUrl) {
     return (
       <PublicLayout showMainContainer={false}>
         <main className='overflow-x-hidden'>
-          {isUrl ? (
-            <iframe
-              src={content}
-              className='h-screen w-full border-none'
-              title={t('Custom Home Page')}
-            />
-          ) : (
-            <div className='container mx-auto py-8'>
-              <Markdown className='custom-home-content'>{content}</Markdown>
-            </div>
-          )}
+          <iframe
+            src={content}
+            className='h-screen w-full border-none'
+            title={t('Custom Home Page')}
+          />
         </main>
       </PublicLayout>
     )
@@ -63,11 +59,24 @@ export function Home() {
   return (
     <PublicLayout showMainContainer={false}>
       <Hero isAuthenticated={isAuthenticated} />
+      {content && <CustomHomeContent content={content} />}
       <Stats />
       <Features />
       <HowItWorks />
       <CTA isAuthenticated={isAuthenticated} />
       <Footer />
     </PublicLayout>
+  )
+}
+
+function CustomHomeContent(props: { content: string }) {
+  return (
+    <section className='relative z-10 px-6 pb-12'>
+      <div className='border-brand-highlight/15 bg-brand-highlight/[0.03] mx-auto max-w-6xl border-y px-0 py-5'>
+        <Markdown className='custom-home-content text-foreground/85 dark:text-brand-mint/85'>
+          {props.content}
+        </Markdown>
+      </div>
+    </section>
   )
 }

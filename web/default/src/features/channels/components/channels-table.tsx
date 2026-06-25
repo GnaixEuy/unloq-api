@@ -16,22 +16,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getRouteApi } from '@tanstack/react-router'
 import type { OnChangeFn, SortingState, Row } from '@tanstack/react-table'
-import { Eye, EyeOff } from 'lucide-react'
-import { useMediaQuery } from '@/hooks'
+import { Eye, EyeOff, FileSpreadsheet } from 'lucide-react'
+import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { getLobeIcon } from '@/lib/lobe-icon'
-import { useTableUrlState } from '@/hooks/use-table-url-state'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+
 import {
   DISABLED_ROW_DESKTOP,
   DISABLED_ROW_MOBILE,
@@ -39,6 +30,17 @@ import {
   useDebouncedColumnFilter,
   useDataTable,
 } from '@/components/data-table'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import { useMediaQuery } from '@/hooks'
+import { useTableUrlState } from '@/hooks/use-table-url-state'
+import { getLobeIcon } from '@/lib/lobe-icon'
+
 import { getChannels, searchChannels, getGroups } from '../api'
 import {
   DEFAULT_PAGE_SIZE,
@@ -53,14 +55,17 @@ import {
   getChannelTypeLabel,
 } from '../lib'
 import type { Channel, ChannelSortBy } from '../types'
-import { useChannelsColumns } from './channels-columns'
 import { ChannelCard } from './channel-card'
+import { useChannelsColumns } from './channels-columns'
 import { useChannels } from './channels-provider'
 import { DataTableBulkActions } from './data-table-bulk-actions'
+import {
+  ChannelModelBatchTestDialog,
+  type ChannelModelBatchTestFilters,
+} from './dialogs/channel-model-batch-test-dialog'
 
 const route = getRouteApi('/_authenticated/channels/')
-const CHANNELS_COLUMN_VISIBILITY_STORAGE_KEY =
-  'channels:column-visibility'
+const CHANNELS_COLUMN_VISIBILITY_STORAGE_KEY = 'channels:column-visibility'
 const CHANNELS_VIEW_MODE_STORAGE_KEY = 'channels:view-mode'
 
 const CHANNEL_SORTABLE_COLUMNS = new Set<ChannelSortBy>([
@@ -80,16 +85,13 @@ function isDisabledChannelRow(channel: Channel) {
 
 export function ChannelsTable() {
   const { t } = useTranslation()
-  const {
-    enableTagMode,
-    idSort,
-    sensitiveVisible,
-    setSensitiveVisible,
-  } = useChannels()
+  const { enableTagMode, idSort, sensitiveVisible, setSensitiveVisible } =
+    useChannels()
   const isMobile = useMediaQuery('(max-width: 640px)')
 
   // Table state
   const [sorting, setSorting] = useState<SortingState>([])
+  const [batchTestOpen, setBatchTestOpen] = useState(false)
 
   // URL state management
   const {
@@ -181,12 +183,8 @@ export function ChannelsTable() {
     [groupsData]
   )
 
-  // Fetch channels data
-  // eslint-disable-next-line @tanstack/query/exhaustive-deps
-  const { data, isLoading, isFetching } = useQuery({
-    queryKey: channelsQueryKeys.list({
-      keyword: globalFilter,
-      model: modelFilter,
+  const baseListFilters = useMemo(
+    () => ({
       group:
         groupFilter.length > 0 && !groupFilter.includes('all')
           ? groupFilter[0]
@@ -199,52 +197,42 @@ export function ChannelsTable() {
         typeFilter.length > 0 && !typeFilter.includes('all')
           ? Number(typeFilter[0])
           : undefined,
-      tag_mode: enableTagMode,
       id_sort: idSort,
       ...sortParams,
+    }),
+    [groupFilter, idSort, sortParams, statusFilter, typeFilter]
+  )
+
+  const batchTestFilters = useMemo<ChannelModelBatchTestFilters>(
+    () => ({
+      keyword: globalFilter,
+      model: modelFilter,
+      ...baseListFilters,
+    }),
+    [baseListFilters, globalFilter, modelFilter]
+  )
+
+  // Fetch channels data
+  // eslint-disable-next-line @tanstack/query/exhaustive-deps
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: channelsQueryKeys.list({
+      ...batchTestFilters,
+      tag_mode: enableTagMode,
       p: pagination.pageIndex + 1,
       page_size: pagination.pageSize,
     }),
     queryFn: async () => {
       if (shouldSearch) {
         return searchChannels({
-          keyword: globalFilter,
-          model: modelFilter,
-          group:
-            groupFilter.length > 0 && !groupFilter.includes('all')
-              ? groupFilter[0]
-              : undefined,
-          status:
-            statusFilter.length > 0 && !statusFilter.includes('all')
-              ? statusFilter[0]
-              : undefined,
-          type:
-            typeFilter.length > 0 && !typeFilter.includes('all')
-              ? Number(typeFilter[0])
-              : undefined,
+          ...batchTestFilters,
           tag_mode: enableTagMode,
-          id_sort: idSort,
-          ...sortParams,
           p: pagination.pageIndex + 1,
           page_size: pagination.pageSize,
         })
       } else {
         return getChannels({
-          group:
-            groupFilter.length > 0 && !groupFilter.includes('all')
-              ? groupFilter[0]
-              : undefined,
-          status:
-            statusFilter.length > 0 && !statusFilter.includes('all')
-              ? statusFilter[0]
-              : undefined,
-          type:
-            typeFilter.length > 0 && !typeFilter.includes('all')
-              ? Number(typeFilter[0])
-              : undefined,
+          ...baseListFilters,
           tag_mode: enableTagMode,
-          id_sort: idSort,
-          ...sortParams,
           p: pagination.pageIndex + 1,
           page_size: pagination.pageSize,
         })
@@ -358,88 +346,102 @@ export function ChannelsTable() {
   ]
 
   return (
-    <DataTablePage
-      table={table}
-      columns={columns}
-      isLoading={isLoading}
-      isFetching={isFetching}
-      emptyTitle={t('No Channels Found')}
-      emptyDescription={t(
-        'No channels available. Create your first channel to get started.'
-      )}
-      skeletonKeyPrefix='channel-skeleton'
-      enableCardView
-      viewModeStorageKey={CHANNELS_VIEW_MODE_STORAGE_KEY}
-      renderCard={(row) => <ChannelCard row={row} />}
-      cardGridClassName='grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-3'
-      applyHeaderSize
-      toolbarProps={{
-        searchPlaceholder: t('Filter by name, ID, or key...'),
-        searchDebounceMs: 500,
-        onReset: () => {
-          resetModelFilterInput()
-        },
-        additionalSearch: (
-          <Input
-            placeholder={t('Filter by model...')}
-            value={modelFilterInput}
-            onChange={onModelFilterInputChange}
-            onCompositionStart={onModelFilterCompositionStart}
-            onCompositionEnd={onModelFilterCompositionEnd}
-            className='w-full sm:w-[150px] lg:w-[180px]'
-          />
-        ),
-        filters: [
-          {
-            columnId: 'status',
-            title: t('Status'),
-            options: [...CHANNEL_STATUS_OPTIONS],
-            singleSelect: true,
+    <>
+      <DataTablePage
+        table={table}
+        columns={columns}
+        isLoading={isLoading}
+        isFetching={isFetching}
+        emptyTitle={t('No Channels Found')}
+        emptyDescription={t(
+          'No channels available. Create your first channel to get started.'
+        )}
+        skeletonKeyPrefix='channel-skeleton'
+        enableCardView
+        viewModeStorageKey={CHANNELS_VIEW_MODE_STORAGE_KEY}
+        renderCard={(row) => <ChannelCard row={row} />}
+        cardGridClassName='grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-3'
+        applyHeaderSize
+        toolbarProps={{
+          searchPlaceholder: t('Filter by name, ID, or key...'),
+          searchDebounceMs: 500,
+          onReset: () => {
+            resetModelFilterInput()
           },
-          {
-            columnId: 'type',
-            title: t('Type'),
-            options: typeFilterOptions,
-            singleSelect: true,
-          },
-          {
-            columnId: 'group',
-            title: t('Group'),
-            options: groupFilterOptions,
-            singleSelect: true,
-          },
-        ],
-        preActions: (
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <Button
-                  variant='ghost'
-                  size='icon'
-                  onClick={() => setSensitiveVisible(!sensitiveVisible)}
-                  aria-label={sensitiveVisible ? t('Hide') : t('Show')}
-                  className='text-muted-foreground hover:text-foreground size-8'
-                />
-              }
-            >
-              {sensitiveVisible ? <Eye /> : <EyeOff />}
-            </TooltipTrigger>
-            <TooltipContent>
-              {sensitiveVisible ? t('Hide') : t('Show')}
-            </TooltipContent>
-          </Tooltip>
-        ),
-      }}
-      getRowClassName={(row, { isMobile }) => {
-        if (!isDisabledChannelRow(row.original)) {
-          return undefined
-        }
-        if (isMobile) {
-          return DISABLED_ROW_MOBILE
-        }
-        return DISABLED_ROW_DESKTOP
-      }}
-      bulkActions={<DataTableBulkActions table={table} />}
-    />
+          additionalSearch: (
+            <Input
+              placeholder={t('Filter by model...')}
+              value={modelFilterInput}
+              onChange={onModelFilterInputChange}
+              onCompositionStart={onModelFilterCompositionStart}
+              onCompositionEnd={onModelFilterCompositionEnd}
+              className='w-full sm:w-[150px] lg:w-[180px]'
+            />
+          ),
+          filters: [
+            {
+              columnId: 'status',
+              title: t('Status'),
+              options: [...CHANNEL_STATUS_OPTIONS],
+              singleSelect: true,
+            },
+            {
+              columnId: 'type',
+              title: t('Type'),
+              options: typeFilterOptions,
+              singleSelect: true,
+            },
+            {
+              columnId: 'group',
+              title: t('Group'),
+              options: groupFilterOptions,
+              singleSelect: true,
+            },
+          ],
+          preActions: (
+            <>
+              <Button variant='outline' onClick={() => setBatchTestOpen(true)}>
+                <FileSpreadsheet data-icon='inline-start' />
+                {t('Batch Test Models')}
+              </Button>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant='ghost'
+                      size='icon'
+                      onClick={() => setSensitiveVisible(!sensitiveVisible)}
+                      aria-label={sensitiveVisible ? t('Hide') : t('Show')}
+                      className='text-muted-foreground hover:text-foreground size-8'
+                    />
+                  }
+                >
+                  {sensitiveVisible ? <Eye /> : <EyeOff />}
+                </TooltipTrigger>
+                <TooltipContent>
+                  {sensitiveVisible ? t('Hide') : t('Show')}
+                </TooltipContent>
+              </Tooltip>
+            </>
+          ),
+        }}
+        getRowClassName={(row, { isMobile }) => {
+          if (!isDisabledChannelRow(row.original)) {
+            return undefined
+          }
+          if (isMobile) {
+            return DISABLED_ROW_MOBILE
+          }
+          return DISABLED_ROW_DESKTOP
+        }}
+        bulkActions={<DataTableBulkActions table={table} />}
+      />
+      <ChannelModelBatchTestDialog
+        open={batchTestOpen}
+        onOpenChange={setBatchTestOpen}
+        filters={batchTestFilters}
+        shouldSearch={shouldSearch}
+      />
+    </>
   )
 }

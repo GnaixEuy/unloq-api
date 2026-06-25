@@ -18,15 +18,16 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { DEFAULT_LOGO } from '@/lib/constants'
-import { cn } from '@/lib/utils'
-import { useStatus } from '@/hooks/use-status'
-import { useSystemConfig } from '@/hooks/use-system-config'
+
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
+import { useStatus } from '@/hooks/use-status'
+import { useSystemConfig } from '@/hooks/use-system-config'
+import { DEFAULT_LOGO } from '@/lib/constants'
+import { cn } from '@/lib/utils'
 
 type SystemBrandProps = {
   defaultName?: string
@@ -43,7 +44,7 @@ type SystemBrandProps = {
  * System brand component
  * Displays current system logo + name.
  * - inline: compact pill in the top app bar; clicking navigates to home (/)
- * - sidebar: stacked card in the sidebar header (display only)
+ * - sidebar: stacked card in the sidebar header; clicking navigates to home (/)
  */
 export function SystemBrand(props: SystemBrandProps) {
   const { t } = useTranslation()
@@ -85,9 +86,9 @@ export function SystemBrand(props: SystemBrandProps) {
       <SidebarMenuItem>
         <SidebarMenuButton
           size='lg'
-          aria-label={`${name} ${version}`}
-          className='h-12 cursor-default gap-3 rounded-[10px] px-0 text-white group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:justify-center hover:bg-transparent hover:text-white active:bg-transparent active:text-white'
-          render={<div />}
+          aria-label={`${t('Go to home')} ${name} ${version}`}
+          className='h-12 gap-3 rounded-[10px] px-0 text-white group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:justify-center hover:bg-transparent hover:text-white active:bg-transparent active:text-white'
+          render={<Link to='/' />}
         >
           <div className='flex min-w-0 flex-1 items-center group-data-[collapsible=icon]:hidden'>
             <img
