@@ -12,6 +12,12 @@ export default defineConfig(({ envMode }) => {
     process.env.VITE_REACT_APP_SERVER_URL ||
     env.rawPublicVars.VITE_REACT_APP_SERVER_URL ||
     'http://localhost:3000'
+  const rawBasePath =
+    process.env.VITE_REACT_APP_BASE_PATH ||
+    env.rawPublicVars.VITE_REACT_APP_BASE_PATH ||
+    ''
+  // Normalize: strip trailing slash, keep leading slash (e.g. "/llm-gateway")
+  const basePath = rawBasePath.replace(/\/+$/, '')
 
   const isProd = envMode === 'production'
   const devProxy = Object.fromEntries(
@@ -75,6 +81,8 @@ export default defineConfig(({ envMode }) => {
       distPath: {
         root: 'dist',
       },
+      // Support subpath deployment (e.g. /llm-gateway) via VITE_REACT_APP_BASE_PATH build arg
+      assetPrefix: basePath ? `${basePath}/` : '/',
       // Rely on Rsbuild default legalComments ("linked" → per-chunk *.LICENSE.txt) in all modes.
       // Do not set "none" in production: that strips minifier-preserved third-party notices and
       // extracted license files, which some distributions require for open-source compliance.
